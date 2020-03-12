@@ -1,0 +1,57 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'com.palantir.git-version' version '0.12.2'
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+}
+
+group = 'com.example'
+version = gitVersion()
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.data:spring-data-rest-hal-browser'
+    runtimeOnly 'mysql:mysql-connector-java'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+springBoot {
+    buildInfo {
+        properties {
+            artifact = project.name
+            version = project.version
+            group = project.group
+            name = project.name
+            additional = [
+                'git:branch': versionDetails()?.branchName ?: 'unspecified',
+                'git:latest-tag': versionDetails()?.lastTag ?: 'unspecified',
+                'git:commit-hash': versionDetails()?.gitHashFull ?: 'unspecified',
+                'git:commit-short-hash': versionDetails()?.gitHash ?: 'unspecified',
+                'git:commit-distance': versionDetails()?.commitDistance ?: 'unspecified',
+                'git:is-clean-tag': versionDetails()?.isCleanTag,
+            ]
+        }
+    }
+}
+
+bootJar {
+    launchScript()
+}

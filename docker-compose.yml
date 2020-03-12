@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+
+  ## docker-compose up -d app
+  app:
+    image: spring-boot-example
+    build: .
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/springdb?useUnicode=yes&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: spring
+      SPRING_DATASOURCE_PASSWORD: Password123
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysql
+      - redis
+    restart: on-failure
+
+  ## docker-compose up -d mysql
+  mysql:
+    image: mysql:5.7.29
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: springdb
+      MYSQL_USER: spring
+      MYSQL_PASSWORD: Password123
+    ports:
+      - 3306:3306
+      - 33060:33060
+    healthcheck:
+      test: ['CMD', 'mysqladmin' ,'ping', '-h', 'localhost']
+      start_period: 10s
+      interval: 1s
+      timeout: 1s
+      retries: 10
+    restart: on-failure
+
+  ## docker-compose up -d redis
+  redis:
+    image: redis:4.0.10
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ['CMD', 'redis-cli' ,'ping', '-h', 'localhost']
+      start_period: 10s
+      interval: 1s
+      timeout: 1s
+      retries: 10
+    restart: on-failure

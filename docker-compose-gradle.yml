@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+
+  ## docker-compose -f docker-compose-gradle.yml run gradle [option...] [task...]
+  gradle:
+    image: gradle:6.2.2-jdk11
+    environment:
+      GRADLE_USER_HOME: /app/.gradle
+      GRADLE_OPTS: >-
+        -Dorg.gradle.daemon=false
+        -Dorg.gradle.parallel=true
+        -Dorg.gradle.configureondemand=true
+    volumes:
+      - .:/app
+    user: gradle
+    working_dir: /app
+    entrypoint: gradle
